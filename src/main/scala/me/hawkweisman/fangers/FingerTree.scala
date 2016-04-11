@@ -23,7 +23,7 @@ sealed trait FingerTree[V, +A] {
     *  Also, the original `FingerTree` is not modified, so you will want to
     *  capture the result.
     */
-  def +:[A1 >: A](x: A1): FingerTree[V, A1] = prepend(x)
+  @inline final def +:[A1 >: A](x: A1): FingerTree[V, A1] = prepend(x)
 
   /** A copy of this `FingerTree` with an element appended.
     *
@@ -38,13 +38,12 @@ sealed trait FingerTree[V, +A] {
     *  Also, the original `FingerTree` is not modified, so you will want to
     *  capture the result.
     */
-  def :+[A1 >: A](x: A1): FingerTree[V, A1] = append(x)
-
+  @inline final def :+[A1 >: A](x: A1): FingerTree[V, A1] = append(x)
 
 }
 
-case class Empty[V, A]
-  extends FingerTree[V, A] {
+case class Empty[V, A]()
+extends FingerTree[V, A] {
 
   def prepend[A1 >: A](x: A1): FingerTree[V, A1]
     = Single(x)
@@ -53,11 +52,14 @@ case class Empty[V, A]
     = Single(x)
 
 }
+
 case class Single[V, A](a: A)
-  extends FingerTree[V, A] {
+extends FingerTree[V, A] {
 
   def prepend[A1 >: A](x: A1): FingerTree[V, A1]
-   = Deep(Affix(x), Empty[V, Node[V, A]], Affix(a))
+    = Deep( Affix(x)
+          , Empty[V, Node[V, A1]]()
+          , Affix(a) )
 
   def append[A1 >: A](x: A1): FingerTree[V, A1]
     = ???
@@ -67,12 +69,11 @@ case class Single[V, A](a: A)
 case class Deep[V, A]( prefix: Affix[A]
                      , deeper: FingerTree[V, Node[V, A]]
                      , suffix: Affix[A])
-  extends FingerTree[V, A] {
+extends FingerTree[V, A] {
 
   def prepend[A1 >: A](x: A1) : FingerTree[V, A1]
     = ???
 
   def append[A1 >: A](x: A1): FingerTree[V, A1]
     = ???
-
 }
