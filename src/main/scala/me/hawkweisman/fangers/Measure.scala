@@ -103,23 +103,24 @@ extends Monoid[V] {
 
 object Measure {
 
-  object Empty extends Measure[Any, Unit] {
+  object Empty
+  extends Measure[Unit, Any] {
     override val empty = ()
-    override def apply(it: Any): Unit = ()
+    override def measure(it: Any): Unit = ()
     override def combine(a: Unit, b: Unit): Unit = ()
   }
 
   private final class Zip[M, N, A](m1: Measure[M, A], m2: Measure[N, A])
-    extends Measure[(M, N), A] {
+  extends Measure[(M, N), A] {
 
     type V = (M, N)
 
     override lazy val empty: V = (m1 empty, m2 empty)
 
-    override def apply(c: A): V = (m1(c), m2(c))
+    override def measure(c: A): V = (m1(c), m2(c))
 
     override def combine(a: V, b: V): V
       = (m1 combine (a._1, b._1), m2 combine (a._2, b._2))
-
   }
+
 }
