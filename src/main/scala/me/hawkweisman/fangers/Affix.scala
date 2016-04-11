@@ -3,7 +3,7 @@ package me.hawkweisman.fangers
 /**
   * Created by hawk on 2/5/16.
   */
-sealed trait Affix[A]
+sealed trait Affix[+A]
 
 case class One[A](a: A)
   extends Affix[A]
